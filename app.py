@@ -6,7 +6,8 @@ import time
 import base64
 # from video import VideoProcessor
 from audio import AudioProcessor
-
+import glob
+import json
 
 def main():
     # css作成
@@ -96,21 +97,21 @@ def record_page():
         elif st.session_state["question"] == 5:
             audio_path = audio_path5
 
-        file_ = open(audio_path, "rb")
-        contents = file_.read()
-        file_.close()
-        audio_str = "data:audio/ogg;base64,%s"%(base64.b64encode(contents).decode())
-        audio_html = """
-                        <audio autoplay=True>
-                        <source src="%s" type="audio/ogg" autoplay=True>
-                        Your browser does not support the audio element.
-                        </audio>
-                    """ %audio_str
+        # file_ = open(audio_path, "rb")
+        # contents = file_.read()
+        # file_.close()
+        # audio_str = "data:audio/ogg;base64,%s"%(base64.b64encode(contents).decode())
+        # audio_html = """
+        #                 <audio autoplay=True>
+        #                 <source src="%s" type="audio/ogg" autoplay=True>
+        #                 Your browser does not support the audio element.
+        #                 </audio>
+        #             """ %audio_str
 
-        audio_placeholder.empty()
-        time.sleep(0.5)
-        audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
-        time.sleep(2.5)
+        # audio_placeholder.empty()
+        # time.sleep(0.5)
+        # audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
+        # time.sleep(2.5)
         st.session_state["count"] += 1
         
     if st.session_state["count"] == 2:
@@ -192,6 +193,13 @@ def record_page():
     st.markdown(result_css, unsafe_allow_html=True)
 
 def result_page():
+    eye_track_json = glob.glob("./results/eye_track.json")
+    with open('./results/eye_track.json') as f:
+        eye_track = json.load(f)
+        
+    with open('./results/voice_analyze.json') as f:
+        voice_analyze = json.load(f)
+
     # css作成
     result_css = f"""
     <style>
@@ -221,16 +229,31 @@ def result_page():
 
     # 値受け取り
     with col2:
-        st.markdown('カメラ目線：**' + st.session_state['camera'] + '**%')
-        st.markdown('笑顔：**' + st.session_state['smile'] + '**秒 / 普通**' + st.session_state['normal'] + '**秒')
-        st.markdown('面接官からの印象：**' + st.session_state['interviwer'] + '**')
-        st.markdown('声の大きさ：**' + st.session_state['volume'] + '**')
-        st.markdown('無言の時間率：**' + st.session_state['silence'] + '**')
-        st.markdown('面接基礎力ランク：**' + st.session_state['rank'] + '**')
+        stc.html("""
+        <p>カメラ目線：<span class='point'>""" + str(round(eye_track['eye_center_ratio']*100)) + """</span>%</p>
+        <p>笑顔：<span class='point'>""" + st.session_state['smile'] + """</span>秒 / 普通<span class='point'>""" + st.session_state['normal'] + """</span>秒</p>
+        <p>面接官からの印象：<span class='point'>""" + st.session_state['interviwer'] + """</span></p>
+        <p>声の大きさ：<span class='point'>""" + st.session_state['volume'] +  """</span></p>
+        <p>無言の時間率：<span class='point'>""" + str(round(voice_analyze['mic_off_ratio']*100)) + """</span>%</p>
+        <p>面接基礎力ランク：<span class='point'>""" + st.session_state['rank'] + """</span></p>
+        <style>
+        .point {
+            font-size: 30px;
+            color: rgb(255, 75, 75);
+            margin: 0 4px;
+            }
+        p {
+            margin:5px 0;
+        }
+        </style>
+        """, height=300)
+        # st.markdown('カメラ目線：**' + str(round(eye_track['eye_center_ratio']*100)) + '**%')
+        # st.markdown('笑顔：**' + st.session_state['smile'] + '**秒 / 普通**' + st.session_state['normal'] + '**秒')
+        # st.markdown('面接官からの印象：**' + st.session_state['interviwer'] + '**')
+        # st.markdown('声の大きさ：**' + st.session_state['volume'] + '**')
+        # st.markdown('無言の時間率：**' + st.session_state['silence'] + '**')
+        # st.markdown('面接基礎力ランク：**' + st.session_state['rank'] + '**')
 
-    # stc.html(
-    #     "<div style='text-align: center'><button style=''>他の質問で分析してみる</button></div>",on_click=show_home
-    #     )
     st.button('他の質問で分析してみる', on_click=show_home)
 
 
