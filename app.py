@@ -4,7 +4,7 @@ import streamlit.components.v1 as stc
 from streamlit_webrtc import webrtc_streamer
 import time
 import base64
-from video import VideoProcessor
+# from video import VideoProcessor
 from audio import AudioProcessor
 
 
@@ -47,17 +47,6 @@ def main():
     # st.markdown(st.session_state["question"])
 
 def record_page():
-    # st.markdown(st.session_state["question"])
-    webrtc_streamer(
-        key="",
-        video_processor_factory=VideoProcessor,
-        audio_processor_factory=AudioProcessor,
-        # デプロイ時にコメントアウト除去
-        # rtc_configuration={
-        #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-        # }
-    )
-
     #音声再生ボタン
     audio_path1 = './question/1intoro.mp3'
     audio_path2 = './question/2sibou.mp3'
@@ -65,7 +54,35 @@ def record_page():
     audio_path4 = './question/4tyoutan.mp3'
     audio_path5 = './question/5vision.mp3'
 
-    if st.button('質問文'):
+    #ビデオ開始用変数 ボタンクリックでtrueにする 
+    global playing
+    playing = False
+
+
+    if 'count' not in st.session_state:
+        st.session_state["count"] = 0   
+    if 'end_button' not in st.session_state:
+        st.session_state["end_button"] = 0   
+
+    container = st.container()
+    start = container.button('開始する')
+    if start:
+        if st.session_state["count"] == 0:
+            st.session_state["count"] += 1  
+        else :
+            st.session_state["count"] == 0
+
+    if st.session_state["count"] == 1:
+        playing_css = f"""
+        <style>
+        div.css-1n76uvr > div.element-container > div.stButton > button.edgvbvh9 {{
+                display: none;
+        }}
+        </style>
+        """
+        # css適用
+        st.markdown(playing_css, unsafe_allow_html=True)
+
         #入力する音声ファイル
         audio_placeholder = st.empty()
         if st.session_state["question"] == 1:
@@ -93,10 +110,43 @@ def record_page():
         audio_placeholder.empty()
         time.sleep(0.5)
         audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
-
+        time.sleep(2.5)
+        st.session_state["count"] += 1
+        
+    if st.session_state["count"] == 2:
+        # 開始ボタンを完全に消す
+        playing_css = f"""
+        <style>
+        div.css-1n76uvr > div > div.css-1n76uvr > div.element-container > div.stButton > button.edgvbvh9 {{
+            display:none;
+        }}
+        </style>
+        """
+        # css適用
+        st.markdown(playing_css, unsafe_allow_html=True)
+        
+        # 再生用変数
+        playing = True
+        # 画面遷移用ボタン
+        end = st.button('終了する', on_click=show_result)
+        stop_css = f"""
+        <style>
+        div.element-container > div.stButton > button {{
+                text-align: center;
+                width: 91px;
+                height: 40px;
+                position: relative;
+                right: 308px;
+                bottom: -483px;
+                z-index: 61;
+                animation: fadeIn 5s ease 5s 1 normal;
+        }}
+        </style>
+        """
+        # css適用
+        st.markdown(stop_css, unsafe_allow_html=True)
+    
     # 値の受け渡し
-
-    # st.session_state['question_contents']='自己紹介をお願いします'
     st.session_state['camera']='70'
     st.session_state['smile']='30'
     st.session_state['normal']='40'
@@ -105,8 +155,41 @@ def record_page():
     st.session_state['silence']='50'
     st.session_state['rank']='B'
 
-    st.button("結果へ", on_click=show_result)
-    st.button("ホームへ", on_click=show_home)
+    webrtc_streamer(
+        key="",
+        desired_playing_state=playing,
+        # video_processor_factory=VideoProcessor,
+        # audio_processor_factory=AudioProcessor,
+        # デプロイ時にコメントアウト除去
+        # rtc_configuration={
+        #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        # }
+    )
+
+    result_css = f"""
+    <style>
+    div.stButton {{
+            text-align: center;
+    }}
+    div.stButton > button {{
+            text-align: center;
+            width: 91px;
+            height: 40px;
+            position: relative;
+            right: 308px;
+            bottom: -170px;
+            z-index: 61;
+    }}
+    .css-1dm0a9e {{
+        margin: 0 0 0 240px;
+    }}
+    div.MuiBox-root.css-0 {{
+            display: flex;
+    }}
+    </style>
+    """
+    # css適用
+    st.markdown(result_css, unsafe_allow_html=True)
 
 def result_page():
     # css作成
@@ -127,8 +210,8 @@ def result_page():
     # st.markdown('# 分析結果')
     # st.markdown('# 質問内容:' + question_dict[st.session_state["question"]])
     stc.html(
-        "<h1 style='text-align: center; color: white;'>分析結果</h1>"
-        "<p style='text-align: center; color: white;'>質問内容: "+ question_dict[st.session_state['question']] + "</p>"
+        "<h1 style='text-align: center; color: black;'>分析結果</h1>"
+        "<p style='text-align: center; color: black;'>質問内容: "+ question_dict[st.session_state['question']] + "</p>"
         )
     col1, col2 = st.columns(2)
 
