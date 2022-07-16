@@ -30,8 +30,8 @@ def main():
 
     # st.markdown('# Interview-Practice')
     stc.html(
-    "<h1 style='text-align: center; color: black; font-size:30px;'>あなたの<span style='color: blue;'>”オンライン面接基礎力”</span>を測ってみよう。</h1>"
-    "<h2 style='text-align: center; color: black; font-size:21px;'>-How much <span style='color: blue;'>”Online-Interview-Basic-Skills”</span> do you have?</h2>"
+    "<h1 style='text-align: center; color: black; font-size:30px;'>あなたの<span style='color: blue;'>”オンライン面接力”</span>を測ってみよう。</h1>"
+    "<h2 style='text-align: center; color: black; font-size:21px;'>-How much <span style='color: blue;'>”Online-Interview-Skills”</span> do you have?</h2>"
     )
 
 
