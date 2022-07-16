@@ -49,7 +49,6 @@ class VideoProcessor:
         }
         with open('results/eye_track.json', 'w') as f:
             json.dump(d, f)
-        pass
 
     def __detect_eyes(self, img):
         img_g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
