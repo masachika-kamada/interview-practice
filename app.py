@@ -1,6 +1,5 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer
-
 import streamlit.components.v1 as stc
 import base64
 import time
@@ -28,7 +27,7 @@ def main():
         # }
     )
 
-    question_button = st.button('アプリ実行')
+    question_button = st.button('質問文')
     if question_button:
         audio_path1 = './question/1intoro.mp3' #入力する音声ファイル
         audio_placeholder = st.empty()
