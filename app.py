@@ -1,3 +1,4 @@
+from click import style
 import streamlit as st
 import streamlit.components.v1 as stc
 from streamlit_webrtc import webrtc_streamer
@@ -26,6 +27,7 @@ def main():
     )
 
     # 値の受け渡し
+    st.session_state['question']='自己紹介をお願いします'
     st.session_state['camera']='70'
     st.session_state['smile']='30'
     st.session_state['normal']='40'
@@ -33,6 +35,7 @@ def main():
     st.session_state['volume']='ちょうど良い'
     st.session_state['silence']='50'
     st.session_state['rank']='B'
+    
     st.button("結果へ", on_click=show_result)
 
 
@@ -41,31 +44,30 @@ def result_page():
     result_css = f"""
     <style>
     div.stButton > button:first-child  {{
-        font-weight  : bold                ;
-        border       :  5px solid #f36     ;
-        border-radius: 10px 10px 10px 10px ;
-        background   : #ddd                ;
-    }}
-    div.main_container {{
-        ext-align: center;
+            display: block;
+            text-align: center;
     }}
     </style>
     """
     # css適用
     st.markdown(result_css, unsafe_allow_html=True)
-    main_container = st.container()
-    main_container.title("分析結果")
-    main_container.markdown("自己紹介をお願いします")
+
+    stc.html(
+        "<h1 style='text-align: center;'>分析結果</h1>"
+        "<p style='text-align: center;'>質問内容: "+ st.session_state['question'] + "</p>"
+        )
+    col1, col2 = st.columns(2)
     # 録画表示 
-    stc.html("<iframe width=’560’ height=’315’ src='https://www.youtube.com/embed/3QPp_DlcZpM' title=’YouTube video player’ frameborder=’0’ allow=’accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture’ allowfullscreen></iframe>")
+    with col1:
+        stc.html("<iframe width=’560’ height=’315’ src='https://www.youtube.com/embed/3QPp_DlcZpM' title=’YouTube video player’ frameborder=’0’ allow=’accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture’ allowfullscreen></iframe>")
     # 値受け取り
-    container = st.container()
-    container.markdown("カメラ目線" + st.session_state['camera'])
-    container.markdown("笑顔：" + st.session_state['smile'] + '秒 / 普通' + st.session_state['normal'] + '秒')
-    container.markdown("面接官からの印象" + st.session_state['interviwer'])
-    container.markdown("声の大きさ" + st.session_state['volume'])
-    container.markdown("無言の時間率" + st.session_state['silence'])
-    container.markdown("面接基礎力ランク" + st.session_state['rank'])
+    with col2:
+        st.markdown('   カメラ目線：**' + st.session_state['camera'] + '**%')
+        st.markdown('   笑顔：**' + st.session_state['smile'] + '**秒 / 普通**' + st.session_state['normal'] + '**秒')
+        st.markdown('   面接官からの印象：**' + st.session_state['interviwer'] + '**')
+        st.markdown('   声の大きさ：**' + st.session_state['volume'] + '**')
+        st.markdown('   無言の時間率：**' + st.session_state['silence'] + '**')
+        st.markdown('   面接基礎力ランク：**' + st.session_state['rank'] + '**')
 
     st.button('他の質問で分析してみる', on_click=show_home)
 
