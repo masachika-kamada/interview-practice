@@ -4,7 +4,7 @@ import json
 class AudioProcessor:
     def __init__(self):
         self.hoge = ""
-        self.db_array = []  # 名前変更
+        self.db_array = []
 
     def recv(self, frame):
         raw_samples = frame.to_ndarray()[0]
@@ -19,13 +19,12 @@ class AudioProcessor:
         mic_on_time, mic_off_time = 0, 0
         false_cnt = 0
         for r in res:
-            if r is False:   
+            if r is False:
                 false_cnt += 1
             else:
-                
-                if false_cnt < 40:  
+                if false_cnt < 40:
                     mic_on_time += false_cnt
-                else:  
+                else:
                     mic_off_time += false_cnt
                 mic_on_time += 1
                 false_cnt = 0
