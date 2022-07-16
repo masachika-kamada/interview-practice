@@ -2,6 +2,8 @@ from click import style
 import streamlit as st
 import streamlit.components.v1 as stc
 from streamlit_webrtc import webrtc_streamer
+import time
+import base64
 from video import VideoProcessor
 from audio import AudioProcessor
 
@@ -62,7 +64,7 @@ def record_page():
     audio_path3 = './question/3gakuchika.mp3'
     audio_path4 = './question/4tyoutan.mp3'
     audio_path5 = './question/5vision.mp3'
-    
+
     if st.button('質問文'):
         #入力する音声ファイル
         audio_placeholder = st.empty()
@@ -102,11 +104,11 @@ def record_page():
     st.session_state['volume']='ちょうど良い'
     st.session_state['silence']='50'
     st.session_state['rank']='B'
-    
+
     st.button("結果へ", on_click=show_result)
     st.button("ホームへ", on_click=show_home)
 
-def result_page(): 
+def result_page():
     # css作成
     result_css = f"""
     <style>
@@ -133,7 +135,7 @@ def result_page():
     # 録画表示
     with col1:
         stc.html("<iframe width=’560’ height=’315’ src='https://www.youtube.com/embed/3QPp_DlcZpM' title=’YouTube video player’ frameborder=’0’ allow=’accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture’ allowfullscreen></iframe>")
-    
+
     # 値受け取り
     with col2:
         st.markdown('カメラ目線：**' + st.session_state['camera'] + '**%')
@@ -178,15 +180,13 @@ def show_result():
     st.session_state["page_control"]=6
 
 
-
-
-# 状態保持する変数を作成して確認
-if ("page_control" in st.session_state and
-    st.session_state["page_control"] > 0 and 
-    st.session_state["page_control"] < 6 ):
-    record_page()
-elif ("page_control" in st.session_state and
-    st.session_state["page_control"] == 6):
-    result_page()
-else:
-    main()
+if __name__ == '__main__':
+    # 状態保持する変数を作成して確認
+    if ("page_control" in st.session_state and
+        0 < st.session_state["page_control"] < 6 ):
+        record_page()
+    elif ("page_control" in st.session_state and
+        st.session_state["page_control"] == 6):
+        result_page()
+    else:
+        main()
