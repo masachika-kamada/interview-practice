@@ -15,11 +15,16 @@ class VideoProcessor:
         ret, pupil_coords = self.__detect_eyes(img)
 
         if ret is False:
-            return
+            return frame
 
         for coord in pupil_coords:
+            if coord is None:
+                continue
             cv2.drawMarker(img, coord, (0, 0, 255), cv2.MARKER_CROSS, markerSize=10, thickness=2)
         return av.VideoFrame.from_ndarray(img, format="bgr24")
+
+    def on_ended(self):
+        pass
 
     def __detect_eyes(self, img):
         img_g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -55,6 +60,8 @@ class VideoProcessor:
         upper = np.array([Hu, Su, Vu])
         mask = cv2.inRange(hsv, lower, upper)
         cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if len(cnts) == 0:
+            return None
         cnt = max(cnts, key=lambda x: cv2.contourArea(x))
 
         x, y, w, h = cv2.boundingRect(cnt)
