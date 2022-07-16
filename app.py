@@ -1,15 +1,7 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer
-
-
-class VideoProcessor:
-    def __init__(self):
-        self.hoge = ""
-
-    def recv(self, frame):
-        img = frame.to_ndarray(format="bgr24")
-
-        # return av.VideoFrame.from_ndarray(img, format="bgr24")
+from video import VideoProcessor
+from audio import AudioProcessor
 
 
 def main():
@@ -18,6 +10,7 @@ def main():
     webrtc_streamer(
         key="",
         video_processor_factory=VideoProcessor,
+        audio_processor_factory=AudioProcessor,
         # デプロイ時にコメントアウト除去
         # rtc_configuration={
         #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
