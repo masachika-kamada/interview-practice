@@ -7,10 +7,30 @@ from audio import AudioProcessor
 
 
 def main():
-
+    # css作成
+    result_css = f"""
+    <style>
+    div.stButton {{
+            text-align: center;
+    }}
+    div.stButton > button {{
+            text-align: center;
+            width: 500px;
+            height: 40px;
+    }}
+    </style>
+    """
+    # css適用
+    st.markdown(result_css, unsafe_allow_html=True)
+    
     st.session_state["question"]=0
 
-    st.markdown('# Interview-Practice')
+    # st.markdown('# Interview-Practice')
+    stc.html(
+    "<h1 style='text-align: center; color: black; font-size:30px;'>あなたの<span style='color: blue;'>”オンライン面接基礎力”</span>を測ってみよう。</h1>"
+    "<h2 style='text-align: center; color: black; font-size:21px;'>-How much <span style='color: blue;'>”Online-Interview-Basic-Skills”</span> do you have?</h2>"
+    )
+
 
     st.button('質問１', on_click=question1)
 
@@ -22,10 +42,10 @@ def main():
 
     st.button('質問５', on_click=question5)
 
-    st.markdown(st.session_state["question"])
+    # st.markdown(st.session_state["question"])
 
 def record_page():
-    st.markdown(st.session_state["question"])
+    # st.markdown(st.session_state["question"])
     webrtc_streamer(
         key="",
         video_processor_factory=VideoProcessor,
@@ -90,21 +110,24 @@ def result_page():
     # css作成
     result_css = f"""
     <style>
-    div.stButton > button:first-child  {{
-            display: block;
+    div.stButton {{
             text-align: center;
+            margin: 30px 0;
     }}
     </style>
     """
     # css適用
     st.markdown(result_css, unsafe_allow_html=True)
 
-    st.markdown('# 分析結果')
-    st.markdown('# 質問内容:')
-    # stc.html(
-    #     "<h1 style='text-align: center;'>分析結果</h1>"
-    #     "<p style='text-align: center;'>質問内容: "+ st.session_state['question'] + "</p>"
-    #     )
+    # 質問割り当て
+    question_dict = {1:"自己紹介をお願いします", 2:"志望動機は何ですか？", 3:"学生時代に頑張ったことはなんですか？", 4:"長所と短所を教えてください", 5:"将来のキャリア像について教えてください"}
+
+    # st.markdown('# 分析結果')
+    # st.markdown('# 質問内容:' + question_dict[st.session_state["question"]])
+    stc.html(
+        "<h1 style='text-align: center; color: white;'>分析結果</h1>"
+        "<p style='text-align: center; color: white;'>質問内容: "+ question_dict[st.session_state['question']] + "</p>"
+        )
     col1, col2 = st.columns(2)
 
     # 録画表示
@@ -113,13 +136,16 @@ def result_page():
     
     # 値受け取り
     with col2:
-        st.markdown('   カメラ目線：**' + st.session_state['camera'] + '**%')
-        st.markdown('   笑顔：**' + st.session_state['smile'] + '**秒 / 普通**' + st.session_state['normal'] + '**秒')
-        st.markdown('   面接官からの印象：**' + st.session_state['interviwer'] + '**')
-        st.markdown('   声の大きさ：**' + st.session_state['volume'] + '**')
-        st.markdown('   無言の時間率：**' + st.session_state['silence'] + '**')
-        st.markdown('   面接基礎力ランク：**' + st.session_state['rank'] + '**')
+        st.markdown('カメラ目線：**' + st.session_state['camera'] + '**%')
+        st.markdown('笑顔：**' + st.session_state['smile'] + '**秒 / 普通**' + st.session_state['normal'] + '**秒')
+        st.markdown('面接官からの印象：**' + st.session_state['interviwer'] + '**')
+        st.markdown('声の大きさ：**' + st.session_state['volume'] + '**')
+        st.markdown('無言の時間率：**' + st.session_state['silence'] + '**')
+        st.markdown('面接基礎力ランク：**' + st.session_state['rank'] + '**')
 
+    # stc.html(
+    #     "<div style='text-align: center'><button style=''>他の質問で分析してみる</button></div>",on_click=show_home
+    #     )
     st.button('他の質問で分析してみる', on_click=show_home)
 
 
@@ -128,27 +154,22 @@ def show_home():
     st.session_state["page_control"]=0
 
 def question1():
-    # homeへ切り替え
     st.session_state["page_control"]=1
     st.session_state["question"]=1
 
 def question2():
-    # homeへ切り替え
     st.session_state["page_control"]=2
     st.session_state["question"]=2
 
 def question3():
-    # homeへ切り替え
     st.session_state["page_control"]=3
     st.session_state["question"]=3
 
 def question4():
-    # homeへ切り替え
     st.session_state["page_control"]=4
     st.session_state["question"]=4
 
 def question5():
-    # homeへ切り替え
     st.session_state["page_control"]=5
     st.session_state["question"]=5
 
