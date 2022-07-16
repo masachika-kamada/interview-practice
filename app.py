@@ -97,21 +97,21 @@ def record_page():
         elif st.session_state["question"] == 5:
             audio_path = audio_path5
 
-        # file_ = open(audio_path, "rb")
-        # contents = file_.read()
-        # file_.close()
-        # audio_str = "data:audio/ogg;base64,%s"%(base64.b64encode(contents).decode())
-        # audio_html = """
-        #                 <audio autoplay=True>
-        #                 <source src="%s" type="audio/ogg" autoplay=True>
-        #                 Your browser does not support the audio element.
-        #                 </audio>
-        #             """ %audio_str
+        file_ = open(audio_path, "rb")
+        contents = file_.read()
+        file_.close()
+        audio_str = "data:audio/ogg;base64,%s"%(base64.b64encode(contents).decode())
+        audio_html = """
+                        <audio autoplay=True>
+                        <source src="%s" type="audio/ogg" autoplay=True>
+                        Your browser does not support the audio element.
+                        </audio>
+                    """ %audio_str
 
-        # audio_placeholder.empty()
-        # time.sleep(0.5)
-        # audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
-        # time.sleep(2.5)
+        audio_placeholder.empty()
+        time.sleep(0.5)
+        audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
+        time.sleep(2.5)
         st.session_state["count"] += 1
         
     if st.session_state["count"] == 2:
