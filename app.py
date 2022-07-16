@@ -2,18 +2,8 @@ from click import style
 import streamlit as st
 import streamlit.components.v1 as stc
 from streamlit_webrtc import webrtc_streamer
-import base64
-import time
-
-
-class VideoProcessor:
-    def __init__(self):
-        self.hoge = ""
-
-    def recv(self, frame):
-        img = frame.to_ndarray(format="bgr24")
-
-        # return av.VideoFrame.from_ndarray(img, format="bgr24")
+from video import VideoProcessor
+from audio import AudioProcessor
 
 
 def main():
@@ -37,12 +27,13 @@ def main():
 def record_page():
     st.markdown(st.session_state["question"])
     webrtc_streamer(
-    key="",
-    video_processor_factory=VideoProcessor,
-    # デプロイ時にコメントアウト除去
-    # rtc_configuration={
-    #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-    # }
+        key="",
+        video_processor_factory=VideoProcessor,
+        audio_processor_factory=AudioProcessor,
+        # デプロイ時にコメントアウト除去
+        # rtc_configuration={
+        #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        # }
     )
 
     #音声再生ボタン
