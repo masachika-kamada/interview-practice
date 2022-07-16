@@ -44,6 +44,28 @@ def record_page():
     # }
     )
 
+    #音声再生ボタン
+    # question_button = st.button('質問文')
+    
+    if st.button('質問文'):
+        audio_path1 = './question/1intoro.mp3' #入力する音声ファイル
+        audio_placeholder = st.empty()
+
+        file_ = open(audio_path1, "rb")
+        contents = file_.read()
+        file_.close()
+        audio_str = "data:audio/ogg;base64,%s"%(base64.b64encode(contents).decode())
+        audio_html = """
+                        <audio autoplay=True>
+                        <source src="%s" type="audio/ogg" autoplay=True>
+                        Your browser does not support the audio element.
+                        </audio>
+                    """ %audio_str
+
+        audio_placeholder.empty()
+        time.sleep(0.5)
+        audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
+
     # 値の受け渡し
     st.button("結果へ", on_click=show_result)
     st.button("ホームへ", on_click=show_home)
@@ -102,26 +124,7 @@ def show_result():
     # resultへ切り替え
     st.session_state["page_control"]=6
 
-#音声再生ボタン
-    # question_button = st.button('質問文')
-    # if question_button:
-    #     audio_path1 = './question/1intoro.mp3' #入力する音声ファイル
-    #     audio_placeholder = st.empty()
 
-    #     file_ = open(audio_path1, "rb")
-    #     contents = file_.read()
-    #     file_.close()
-    #     audio_str = "data:audio/ogg;base64,%s"%(base64.b64encode(contents).decode())
-    #     audio_html = """
-    #                     <audio autoplay=True>
-    #                     <source src="%s" type="audio/ogg" autoplay=True>
-    #                     Your browser does not support the audio element.
-    #                     </audio>
-    #                 """ %audio_str
-
-    #     audio_placeholder.empty()
-    #     time.sleep(0.5)
-    #     audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
 
 
 # 状態保持する変数を作成して確認
