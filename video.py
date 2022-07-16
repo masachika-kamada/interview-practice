@@ -2,6 +2,7 @@ import av
 import cv2
 import dlib
 import numpy as np
+import json
 
 
 class VideoProcessor:
@@ -10,7 +11,9 @@ class VideoProcessor:
         self.predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
         self.margin = 5
         self.thresh_diff_eyes_hor = 0.2
-        self.thresh_diff_eyes_ver = 0.1
+        self.eye_center = 0
+        self.eye_left = 0
+        self.eye_right = 0
 
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
@@ -23,27 +26,29 @@ class VideoProcessor:
             if coord is None:
                 continue
             cv2.drawMarker(img, coord, (0, 0, 255), cv2.MARKER_CROSS, markerSize=10, thickness=2)
-            eye_hor_l = 1 - eye_tracks[0][0]
-            eye_hor_r = eye_tracks[1][0]
-            diff_eyes_hor = eye_hor_l - eye_hor_r
-            if abs(diff_eyes_hor) < self.thresh_diff_eyes_hor:
-                cv2.putText(img, "Center", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            elif diff_eyes_hor < 0:
-                cv2.putText(img, "Left", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            else:
-                cv2.putText(img, "Right", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            # eye_ver_l = eye_tracks[0][1]
-            # eye_ver_r = eye_tracks[1][1]
-            # diff_eyes_ver = (eye_ver_l + eye_ver_r) / 2
-            # if abs(diff_eyes_ver - 0.5) < self.thresh_diff_eyes_ver:
-            #     cv2.putText(img, "Center", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            # elif diff_eyes_ver < 0.5:
-            #     cv2.putText(img, "Up", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            # else:
-            #     cv2.putText(img, "Down", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        eye_hor_l = 1 - eye_tracks[0][0]
+        eye_hor_r = eye_tracks[1][0]
+        diff_eyes_hor = eye_hor_l - eye_hor_r
+        if abs(diff_eyes_hor) < self.thresh_diff_eyes_hor:
+            cv2.putText(img, "Center", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            self.eye_center += 1
+        elif diff_eyes_hor < 0:
+            cv2.putText(img, "Left", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            self.eye_left += 1
+        else:
+            cv2.putText(img, "Right", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            self.eye_right += 1
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
     def on_ended(self):
+        n_frames = self.eye_center + self.eye_left + self.eye_right
+        d = {
+            "eye_center_ratio": self.eye_center / n_frames,
+            "eye_left_ratio": self.eye_left / n_frames,
+            "eye_right_ratio": self.eye_right / n_frames
+        }
+        with open('results/eye_track.json', 'w') as f:
+            json.dump(d, f)
         pass
 
     def __detect_eyes(self, img):
@@ -63,7 +68,7 @@ class VideoProcessor:
         for idx in eyes_idx:
             ref_point, eye_img, w, h = self.__get_eye_img(img, landmarks, idx)
             cx, cy = self.__get_pupil_coord(eye_img)
-            pupil_coords.append((cx + ref_point[0], cy + ref_point[1]))
+            pupil_coords.append((int(cx + ref_point[0]), int(cy + ref_point[1])))
             eye_track.append((cx / w, cy / h))
         return True, pupil_coords, eye_track
 
