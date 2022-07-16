@@ -1,5 +1,5 @@
 import numpy as np
-
+import json
 
 class AudioProcessor:
     def __init__(self):
@@ -10,18 +10,29 @@ class AudioProcessor:
         raw_samples = frame.to_ndarray()[0]
         N = len(raw_samples)
         rms = np.sqrt((1 / N) * (np.sum(raw_samples)) ** 2)
-        db = 20 * np.log10(rms)
-        print(db)
-
-        # TODO: データの蓄積
-        self.db_array.append(db)
-
-        # どの大きさだと最適なのか？声の大きさの基準を決める
-        # 無言の時はいくつなのか
-        # 大きすぎの時と小さすぎ（無言）の時のカウントとかをして
-        # 最終的な評価に繋げる
+        self.db_array.append(rms)
 
     def on_ended(self):
-        # videoが終わるときに呼び出されます
-        # 最終的な結果をjsonファイルに出力
-        # 参考：video.py
+        print(len(self.db_array),'+===============+')
+        db_array = np.array(self.db_array)
+        res = np.where(db_array < 200, False, True)
+        mic_on_time, mic_off_time = 0, 0
+        false_cnt = 0
+        for r in res:
+            if r is False:   
+                false_cnt += 1
+            else:
+                
+                if false_cnt < 40:  
+                    mic_on_time += false_cnt
+                else:  
+                    mic_off_time += false_cnt
+                mic_on_time += 1
+                false_cnt = 0
+        min_off_ratio = mic_off_time / (mic_on_time + mic_off_time)
+        d = {
+            "mic_off_ratio": min_off_ratio
+        }
+        with open('results/voice_analyze.json', 'w') as f:
+            json.dump(d, f)
+
