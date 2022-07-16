@@ -45,13 +45,27 @@ def record_page():
     )
 
     #音声再生ボタン
-    # question_button = st.button('質問文')
+    audio_path1 = './question/1intoro.mp3'
+    audio_path2 = './question/2sibou.mp3'
+    audio_path3 = './question/3gakuchika.mp3'
+    audio_path4 = './question/4tyoutan.mp3'
+    audio_path5 = './question/5vision.mp3'
     
     if st.button('質問文'):
-        audio_path1 = './question/1intoro.mp3' #入力する音声ファイル
+        #入力する音声ファイル
         audio_placeholder = st.empty()
+        if st.session_state["question"] == 1:
+            audio_path = audio_path1
+        elif st.session_state["question"] == 2:
+            audio_path = audio_path2
+        elif st.session_state["question"] == 3:
+            audio_path = audio_path3
+        elif st.session_state["question"] == 4:
+            audio_path = audio_path4
+        elif st.session_state["question"] == 5:
+            audio_path = audio_path5
 
-        file_ = open(audio_path1, "rb")
+        file_ = open(audio_path, "rb")
         contents = file_.read()
         file_.close()
         audio_str = "data:audio/ogg;base64,%s"%(base64.b64encode(contents).decode())
