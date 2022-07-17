@@ -8,6 +8,8 @@ import base64
 from audio import AudioProcessor
 import glob
 import json
+from PIL import Image
+import random
 
 def main():
     # css作成
@@ -51,25 +53,40 @@ def main():
 
     # st.markdown('# Interview-Practice')
     stc.html("""
-    <h1>あなたの<span>”オンライン面接力”</span>を測ってみよう。</h1>
-    <h2>-How much <span>”Online-Interview-Skills”</span>do you have?</h2>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap" rel="stylesheet">
+    </head>
+    <h1 class='title'>めんたつ</h1>
+    <h1 class='subtitle'>あなたの<span>”オンライン面接力”</span>を測ってみよう。</h1>
+    <h2 class='subtitle'>-How much <span>”Online-Interview-Skills”</span>do you have?-</h2>
     <style>
-    h1, h2 {
+    .title {
+        text-align: center;
+        color: black;
+        margin: 0;
+        font-size: 70px;
+    }
+    .subtitle {
         text-align: center;
         color: #5f6c7b; 
     }
-    h1 {
+    h1.subtitle {
         font-size:30px;
+        margin: 10px 0 0 0;
     }
-    h2 {
+    h2.subtitle {
         font-size:21px;
     }
     span {
         color: #3da9fc;
     }
+    .title {
+        font-family: 'Yuji Syuku', serif;
+    }
     </style>
-    """
-    )
+    """, height=225)
 
 
     st.button('質問１', on_click=question1)
@@ -346,31 +363,37 @@ def result_page():
     with open('./results/voice_analyze.json') as f:
         voice_analyze = json.load(f)
 
+    i = random.randrange(1, 4)
+    img_dict = {1:"https://images.unsplash.com/photo-1604488912264-dfed70450d76?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=922&q=80", 2:"https://images.unsplash.com/photo-1627199219038-e8263f729e3d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1031&q=80", 3:"https://images.unsplash.com/photo-1632144130358-6cfeed023e27?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80", 4:"https://images.unsplash.com/photo-1637855190680-5cbe1d870b46?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"}
+
     # 質問割り当て
     question_dict = {1:"自己紹介をお願いします", 2:"志望動機は何ですか？", 3:"学生時代に頑張ったことはなんですか？", 4:"長所と短所を教えてください", 5:"将来のキャリア像について教えてください"}
 
-    # st.markdown('# 分析結果')
-    # st.markdown('# 質問内容:' + question_dict[st.session_state["question"]])
     stc.html("""
+        <head>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap" rel="stylesheet">
+        </head>
         <h1>分析結果</h1>
         <p>質問内容: """+ question_dict[st.session_state['question']] + """</p>
         <style>
+        h1 {
+            font-family: 'Yuji Syuku', serif;
+            font-size: 60px;
+            color: black;
+        }
         h1, p {
             text-align: center;
-            color: #5f6c7b;
             margin: 10px 0 0 0;
             }
+        p {
+            color: #5f6c7b;
+        }
         </style>
-        """, height=90
+        """, height=145
         )
-    # col1, col2 = st.columns(2)
 
-    # # 録画表示
-    # with col1:
-    #     stc.html("<iframe width=’560’ height=’315’ src='https://www.youtube.com/embed/3QPp_DlcZpM' title=’YouTube video player’ frameborder=’0’ allow=’accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture’ allowfullscreen></iframe>")
-
-    # # 値受け取り
-    # with col2:
     stc.html("""
     <div class='wrapper'>
         <div class='first'>
@@ -385,7 +408,9 @@ def result_page():
     <div class='under_wrapper'>
         <p>面接官からの印象<span class='impression_coma'>：</span><span class='point impression_span'>""" + st.session_state['interviwer'] + """</span></p>
     </div>
-
+    <div class="img_div">
+        <img src=""" + img_dict[i]+ """>
+    </div>
     <style>
     .wrapper {
         display: flex;
@@ -418,8 +443,16 @@ def result_page():
     .muite_coma {
         margin:0 0 0 16px;
     }
+    img {
+        width: 400px;
+        height: auto;
+    }
+    .img_div {
+        text-align: center;
+        margin: 30px;
+    }
     </style>
-    """, height=180)
+    """, height=450)
 
     st.button('他の質問で分析してみる', on_click=show_home)
 
