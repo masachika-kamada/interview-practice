@@ -4,7 +4,7 @@ import streamlit.components.v1 as stc
 from streamlit_webrtc import webrtc_streamer
 import time
 import base64
-from video import VideoProcessor
+# from video import VideoProcessor
 from audio import AudioProcessor
 
 
@@ -30,7 +30,7 @@ def record_page():
     st.markdown(st.session_state["question"])
     webrtc_streamer(
         key="",
-        video_processor_factory=VideoProcessor,
+        # video_processor_factory=VideoProcessor,
         audio_processor_factory=AudioProcessor,
         # デプロイ時にコメントアウト除去
         # rtc_configuration={

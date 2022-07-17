@@ -4,5 +4,5 @@ opencv-python-headless
 numpy
 av
 cmake
-dlib
+# dlib
 click
