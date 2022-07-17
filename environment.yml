@@ -1,6 +1,9 @@
-name: dlib
+name: mk
 channels:
   - conda-forge
+  - defaults
 dependencies:
-  - streamlit >= 0.73
+  - python==3.8
+  - cmake==3.21.1
   - dlib
+  - opencv
