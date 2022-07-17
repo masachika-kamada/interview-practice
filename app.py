@@ -401,7 +401,7 @@ def result_page():
             <p>無言の時間率<span class='mute_coma'>：</span><span class='point mute_span'>""" + str(round(voice_analyze['mic_off_ratio']*100)) + """</span>%</p>
         </div>
         <div class='second'>
-            <p>笑顔率<span class='smile_coma'>：</span><span class='point smile_span'>""" + str(round(eye_track['eye_center_ratio']*100)) + """</span>%</p>
+            <p>笑顔率<span class='smile_coma'>：</span><span class='point smile_span'>""" + str(round(eye_track['face_smile_ratio']*100)) + """</span>%</p>
             <p>声量<span class='volume_coma'>：</span><span class='point volume_span'>""" + st.session_state['volume'] +  """</span></p>
         </div>
     </div>
