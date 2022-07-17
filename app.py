@@ -20,7 +20,28 @@ def main():
             text-align: center;
             width: 500px;
             height: 40px;
+            color: #5f6c7b; 
     }}
+    /* ボタン色変更 */
+    div.stButton > button:hover {{
+        border-color: #90b4ce;
+        color: #90b4ce;
+        # border-color: #3da9fc;
+        # color: #3da9fc;
+    }}
+    div.stButton > button:focus:not(:active) {{
+        border-color: #90b4ce;
+        color: #90b4ce;
+    }}
+    div.stButton > button.css-1cpxqw2:focus {{
+        box-shadow: unset;
+    }}
+    div.stButton > button.css-1cpxqw2:focus {{
+        border-color: #90b4ce;
+        background-color: #90b4ce;
+        color: #fffffe;
+    }}
+    /* ボタン色変更ここまで */
     </style>
     """
     # css適用
@@ -29,9 +50,25 @@ def main():
     st.session_state["question"]=0
 
     # st.markdown('# Interview-Practice')
-    stc.html(
-    "<h1 style='text-align: center; color: black; font-size:30px;'>あなたの<span style='color: blue;'>”オンライン面接力”</span>を測ってみよう。</h1>"
-    "<h2 style='text-align: center; color: black; font-size:21px;'>-How much <span style='color: blue;'>”Online-Interview-Skills”</span> do you have?</h2>"
+    stc.html("""
+    <h1>あなたの<span>”オンライン面接力”</span>を測ってみよう。</h1>
+    <h2>-How much <span>”Online-Interview-Skills”</span>do you have?</h2>
+    <style>
+    h1, h2 {
+        text-align: center;
+        color: #5f6c7b; 
+    }
+    h1 {
+        font-size:30px;
+    }
+    h2 {
+        font-size:21px;
+    }
+    span {
+        color: #3da9fc;
+    }
+    </style>
+    """
     )
 
 
@@ -73,6 +110,7 @@ def record_page():
         else :
             st.session_state["count"] == 0
 
+    #　開始ボタンクリック時
     if st.session_state["count"] == 1:
         playing_css = f"""
         <style>
@@ -83,6 +121,73 @@ def record_page():
         """
         # css適用
         st.markdown(playing_css, unsafe_allow_html=True)
+
+        # ローディング表示 
+        stc.html("""
+            <div class="loader">Loading...</div>
+            <style>
+            .loader,
+            .loader:before,
+            .loader:after {
+            background: #3da9fc;
+            -webkit-animation: load1 1s infinite ease-in-out;
+            animation: load1 1s infinite ease-in-out;
+            width: 1em;
+            height: 4em;
+            }
+            .loader {
+            color: #3da9fc;
+            text-indent: -9999em;
+            margin: 44px auto;
+            position: relative;
+            font-size: 22px;
+            -webkit-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            transform: translateZ(0);
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+            }
+            .loader:before,
+            .loader:after {
+            position: absolute;
+            top: 0;
+            content: '';
+            }
+            .loader:before {
+            left: -1.5em;
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+            }
+            .loader:after {
+            left: 1.5em;
+            }
+            @-webkit-keyframes load1 {
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 0;
+                height: 4em;
+            }
+            40% {
+                box-shadow: 0 -2em;
+                height: 5em;
+            }
+            }
+            @keyframes load1 {
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 0;
+                height: 4em;
+            }
+            40% {
+                box-shadow: 0 -2em;
+                height: 5em;
+            }
+            }
+
+            </style>
+            """)
 
         #入力する音声ファイル
         audio_placeholder = st.empty()
@@ -111,9 +216,8 @@ def record_page():
         audio_placeholder.empty()
         time.sleep(0.5)
         audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
-        time.sleep(2.5)
+        time.sleep(3)
         st.session_state["count"] += 1
-        
     if st.session_state["count"] == 2:
         # 開始ボタンを完全に消す
         playing_css = f"""
@@ -128,33 +232,6 @@ def record_page():
         
         # 再生用変数
         playing = True
-        # 画面遷移用ボタン
-        end = st.button('終了する', on_click=show_result)
-        stop_css = f"""
-        <style>
-        div.element-container > div.stButton > button {{
-                text-align: center;
-                width: 91px;
-                height: 40px;
-                position: relative;
-                right: 308px;
-                bottom: -483px;
-                z-index: 61;
-                animation: fadeIn 5s ease 5s 1 normal;
-        }}
-        </style>
-        """
-        # css適用
-        st.markdown(stop_css, unsafe_allow_html=True)
-    
-    # 値の受け渡し
-    st.session_state['camera']='70'
-    st.session_state['smile']='30'
-    st.session_state['normal']='40'
-    st.session_state['interviwer']='良'
-    st.session_state['volume']='ちょうど良い'
-    st.session_state['silence']='50'
-    st.session_state['rank']='B'
 
     webrtc_streamer(
         key="",
@@ -180,17 +257,86 @@ def record_page():
             right: 308px;
             bottom: -170px;
             z-index: 61;
+            color: #5f6c7b;
     }}
-    .css-1dm0a9e {{
-        margin: 0 0 0 240px;
+    /* ボタン色変更 */
+    div.stButton > button:hover {{
+        border-color: #90b4ce;
+        color: #90b4ce;
+        # border-color: #3da9fc;
+        # color: #3da9fc;
     }}
-    div.MuiBox-root.css-0 {{
-            display: flex;
+    div.stButton > button:focus:not(:active) {{
+        border-color: #90b4ce;
+        color: #90b4ce;
     }}
+    div.stButton > button.css-1cpxqw2:focus {{
+        box-shadow: unset;
+    }}
+    div.stButton > button.css-1cpxqw2:focus {{
+        border-color: #90b4ce;
+        background-color: #90b4ce;
+        color: #fffffe;
+    }}
+    /* ボタン色変更ここまで */
     </style>
     """
     # css適用
     st.markdown(result_css, unsafe_allow_html=True)
+
+    if st.session_state["count"] == 2:
+        # # 開始ボタンを完全に消す
+        # playing_css = f"""
+        # <style>
+        # div.css-1n76uvr > div > div.css-1n76uvr > div.element-container > div.stButton > button.edgvbvh9 {{
+        #     display:none;
+        # }}
+        # </style>
+        # """
+        # # css適用
+        # st.markdown(playing_css, unsafe_allow_html=True)
+        
+        # # 再生用変数
+        # playing = True
+        # 画面遷移用ボタン
+        end = st.button('終了する', on_click=show_result)
+        stop_css = f"""
+        <style>
+        div.element-container > div.stButton > button {{
+                text-align: center;
+                width: 100px;
+                height: 40px;
+                position: relative;
+                right: 302px;
+                bottom: 78px;
+                z-index: 61;
+                # opacity:0;
+                # animation-name: sample01; /*←@keyframesにも同じ名前を記述*/
+                # animation-duration: 3s; 
+                # animation-fill-mode: forwards;
+                }}
+        # @keyframes sample01 {{
+        # 0% {{
+        # opacity: 0;
+        # color:#000;
+        # }}
+        # 100% {{
+        # opacity: 1;
+        # color:black;
+        # }}
+        # }}
+        </style>
+        """
+        # css適用
+        st.markdown(stop_css, unsafe_allow_html=True)
+        # 値の受け渡し
+    st.session_state['camera']='70'
+    st.session_state['smile']='30'
+    st.session_state['normal']='40'
+    st.session_state['interviwer']='良'
+    st.session_state['volume']='ちょうど良い'
+    st.session_state['silence']='50'
+    st.session_state['rank']='B'
 
 def result_page():
     eye_track_json = glob.glob("./results/eye_track.json")
@@ -200,61 +346,119 @@ def result_page():
     with open('./results/voice_analyze.json') as f:
         voice_analyze = json.load(f)
 
-    # css作成
-    result_css = f"""
-    <style>
-    div.stButton {{
-            text-align: center;
-            margin: 30px 0;
-    }}
-    </style>
-    """
-    # css適用
-    st.markdown(result_css, unsafe_allow_html=True)
-
     # 質問割り当て
     question_dict = {1:"自己紹介をお願いします", 2:"志望動機は何ですか？", 3:"学生時代に頑張ったことはなんですか？", 4:"長所と短所を教えてください", 5:"将来のキャリア像について教えてください"}
 
     # st.markdown('# 分析結果')
     # st.markdown('# 質問内容:' + question_dict[st.session_state["question"]])
-    stc.html(
-        "<h1 style='text-align: center; color: black;'>分析結果</h1>"
-        "<p style='text-align: center; color: black;'>質問内容: "+ question_dict[st.session_state['question']] + "</p>"
-        )
-    col1, col2 = st.columns(2)
-
-    # 録画表示
-    with col1:
-        stc.html("<iframe width=’560’ height=’315’ src='https://www.youtube.com/embed/3QPp_DlcZpM' title=’YouTube video player’ frameborder=’0’ allow=’accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture’ allowfullscreen></iframe>")
-
-    # 値受け取り
-    with col2:
-        stc.html("""
-        <p>カメラ目線：<span class='point'>""" + str(round(eye_track['eye_center_ratio']*100)) + """</span>%</p>
-        <p>笑顔：<span class='point'>""" + st.session_state['smile'] + """</span>秒 / 普通<span class='point'>""" + st.session_state['normal'] + """</span>秒</p>
-        <p>面接官からの印象：<span class='point'>""" + st.session_state['interviwer'] + """</span></p>
-        <p>声の大きさ：<span class='point'>""" + st.session_state['volume'] +  """</span></p>
-        <p>無言の時間率：<span class='point'>""" + str(round(voice_analyze['mic_off_ratio']*100)) + """</span>%</p>
-        <p>面接基礎力ランク：<span class='point'>""" + st.session_state['rank'] + """</span></p>
+    stc.html("""
+        <h1>分析結果</h1>
+        <p>質問内容: """+ question_dict[st.session_state['question']] + """</p>
         <style>
-        .point {
-            font-size: 30px;
-            color: rgb(255, 75, 75);
-            margin: 0 4px;
+        h1, p {
+            text-align: center;
+            color: #5f6c7b;
+            margin: 10px 0 0 0;
             }
-        p {
-            margin:5px 0;
-        }
         </style>
-        """, height=300)
-        # st.markdown('カメラ目線：**' + str(round(eye_track['eye_center_ratio']*100)) + '**%')
-        # st.markdown('笑顔：**' + st.session_state['smile'] + '**秒 / 普通**' + st.session_state['normal'] + '**秒')
-        # st.markdown('面接官からの印象：**' + st.session_state['interviwer'] + '**')
-        # st.markdown('声の大きさ：**' + st.session_state['volume'] + '**')
-        # st.markdown('無言の時間率：**' + st.session_state['silence'] + '**')
-        # st.markdown('面接基礎力ランク：**' + st.session_state['rank'] + '**')
+        """, height=90
+        )
+    # col1, col2 = st.columns(2)
+
+    # # 録画表示
+    # with col1:
+    #     stc.html("<iframe width=’560’ height=’315’ src='https://www.youtube.com/embed/3QPp_DlcZpM' title=’YouTube video player’ frameborder=’0’ allow=’accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture’ allowfullscreen></iframe>")
+
+    # # 値受け取り
+    # with col2:
+    stc.html("""
+    <div class='wrapper'>
+        <div class='first'>
+            <p>カメラ目線率<span class='camera_coma'>：</span><span class='point camera_span'>""" + str(round(eye_track['eye_center_ratio']*100)) + """</span>%</p>
+            <p>無言の時間率<span class='mute_coma'>：</span><span class='point mute_span'>""" + str(round(voice_analyze['mic_off_ratio']*100)) + """</span>%</p>
+        </div>
+        <div class='second'>
+            <p>笑顔率<span class='smile_coma'>：</span><span class='point smile_span'>""" + str(round(eye_track['eye_center_ratio']*100)) + """</span>%</p>
+            <p>声量<span class='volume_coma'>：</span><span class='point volume_span'>""" + st.session_state['volume'] +  """</span></p>
+        </div>
+    </div>
+    <div class='under_wrapper'>
+        <p>面接官からの印象<span class='impression_coma'>：</span><span class='point impression_span'>""" + st.session_state['interviwer'] + """</span></p>
+    </div>
+
+    <style>
+    .wrapper {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .first {
+        margin: 0 0 0 23%;
+    }
+    .second {
+        margin: 0 0 0 4%;
+    }
+    .under_wrapper {
+        text-align: center;
+    }
+    .point {
+        font-size: 30px;
+        color: #3da9fc;
+        margin: 0 4px;
+        }
+    p {
+        color:#5f6c7b;
+        margin:5px 0;
+    }
+    .camera_coma {
+        margin:0 0 0 0px;
+    }
+    .muite_coma {
+        margin:0 0 0 31px;
+    }
+    .muite_coma {
+        margin:0 0 0 16px;
+    }
+    </style>
+    """, height=180)
 
     st.button('他の質問で分析してみる', on_click=show_home)
+
+    # css作成
+    result_css = f"""
+    <style>
+    div.stButton {{
+            text-align: center;
+            margin: 0 0;
+            color: #5f6c7b;
+            }}
+
+    .vsc-initialized {{
+        margin: 0;
+    }}
+    /* ボタン色変更 */
+    div.stButton > button:hover {{
+        border-color: #90b4ce;
+        color: #90b4ce;
+        # border-color: #3da9fc;
+        # color: #3da9fc;
+    }}
+    div.stButton > button:focus:not(:active) {{
+        border-color: #90b4ce;
+        color: #90b4ce;
+    }}
+    div.stButton > button.css-1cpxqw2:focus {{
+        box-shadow: unset;
+    }}
+    div.stButton > button.css-1cpxqw2:focus {{
+        border-color: #90b4ce;
+        background-color: #90b4ce;
+        color: #fffffe;
+    }}
+    /* ボタン色変更ここまで */
+    </style>
+    """
+    # css適用
+    st.markdown(result_css, unsafe_allow_html=True)
 
 
 def show_home():
