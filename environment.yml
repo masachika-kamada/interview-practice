@@ -10,7 +10,7 @@ dependencies:
   - zlib=1.2.12
   - streamlit >= 0.73
   - dlib
-  - streamlit_webrtc
   - numpy
   - click
   - opencv
+  # - streamlit_webrtc
