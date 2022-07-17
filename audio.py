@@ -1,3 +1,4 @@
+from ast import Num
 import numpy as np
 import json
 
@@ -10,19 +11,20 @@ class AudioProcessor:
         raw_samples = frame.to_ndarray()[0]
         N = len(raw_samples)
         rms = np.sqrt((1 / N) * (np.sum(raw_samples)) ** 2)
-        self.db_array.append(rms)
+        if rms >=0:
+            self.db_array.append(rms)
+
 
     def on_ended(self):
-        print(len(self.db_array),'+===============+')
         db_array = np.array(self.db_array)
-        res = np.where(db_array < 200, False, True)
+        res = np.where(db_array < 100, False, True)
         mic_on_time, mic_off_time = 0, 0
         false_cnt = 0
         for r in res:
-            if r is False:
+            if bool(r) is False:
                 false_cnt += 1
             else:
-                if false_cnt < 40:
+                if false_cnt < 35:
                     mic_on_time += false_cnt
                 else:
                     mic_off_time += false_cnt
