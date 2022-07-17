@@ -3,6 +3,7 @@ import cv2
 import dlib
 import numpy as np
 import json
+from deepface import DeepFace
 
 
 class VideoProcessor:
@@ -14,11 +15,23 @@ class VideoProcessor:
         self.eye_center = 0
         self.eye_left = 0
         self.eye_right = 0
+        self.face_smile = 0
+        self.face_else = 0
 
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
-        ret, pupil_coords, eye_tracks = self.__detect_eyes(img)
 
+        try:
+            result = DeepFace.analyze(img, actions=['emotion'])
+            emotion = result['dominant_emotion']
+            if emotion == "happy":
+                self.face_smile += 1
+            else:
+                self.face_else += 1
+        except Exception:
+            print("No face detected")
+
+        ret, pupil_coords, eye_tracks = self.__detect_eyes(img)
         if ret is False:
             return frame
 
@@ -45,7 +58,8 @@ class VideoProcessor:
         d = {
             "eye_center_ratio": self.eye_center / n_frames,
             "eye_left_ratio": self.eye_left / n_frames,
-            "eye_right_ratio": self.eye_right / n_frames
+            "eye_right_ratio": self.eye_right / n_frames,
+            "face_smile_ratio": self.face_smile / (self.face_else + self.face_smile),
         }
         with open('results/eye_track.json', 'w') as f:
             json.dump(d, f)
