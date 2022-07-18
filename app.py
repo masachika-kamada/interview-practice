@@ -4,7 +4,7 @@ import streamlit.components.v1 as stc
 from streamlit_webrtc import webrtc_streamer
 import time
 import base64
-# from video import VideoProcessor
+from video import VideoProcessor
 from audio import AudioProcessor
 import glob
 import json
@@ -22,7 +22,7 @@ def main():
             text-align: center;
             width: 500px;
             height: 40px;
-            color: #5f6c7b; 
+            color: #5f6c7b;
     }}
     /* ボタン色変更 */
     div.stButton > button:hover {{
@@ -48,7 +48,7 @@ def main():
     """
     # css適用
     st.markdown(result_css, unsafe_allow_html=True)
-    
+
     st.session_state["question"]=0
 
     # st.markdown('# Interview-Practice')
@@ -70,7 +70,7 @@ def main():
     }
     .subtitle {
         text-align: center;
-        color: #5f6c7b; 
+        color: #5f6c7b;
     }
     h1.subtitle {
         font-size:30px;
@@ -109,21 +109,21 @@ def record_page():
     audio_path4 = './question/4tyoutan.mp3'
     audio_path5 = './question/5vision.mp3'
 
-    #ビデオ開始用変数 ボタンクリックでtrueにする 
+    #ビデオ開始用変数 ボタンクリックでtrueにする
     global playing
     playing = False
 
 
     if 'count' not in st.session_state:
-        st.session_state["count"] = 0   
+        st.session_state["count"] = 0
     if 'end_button' not in st.session_state:
-        st.session_state["end_button"] = 0   
+        st.session_state["end_button"] = 0
 
     container = st.container()
     start = container.button('開始する')
     if start:
         if st.session_state["count"] == 0:
-            st.session_state["count"] += 1  
+            st.session_state["count"] += 1
         else :
             st.session_state["count"] == 0
 
@@ -139,7 +139,7 @@ def record_page():
         # css適用
         st.markdown(playing_css, unsafe_allow_html=True)
 
-        # ローディング表示 
+        # ローディング表示
         stc.html("""
             <div class="loader">Loading...</div>
             <style>
@@ -246,15 +246,15 @@ def record_page():
         """
         # css適用
         st.markdown(playing_css, unsafe_allow_html=True)
-        
+
         # 再生用変数
         playing = True
 
     webrtc_streamer(
         key="",
         desired_playing_state=playing,
-        # video_processor_factory=VideoProcessor,
-        # audio_processor_factory=AudioProcessor,
+        video_processor_factory=VideoProcessor,
+        audio_processor_factory=AudioProcessor,
         # デプロイ時にコメントアウト除去
         # rtc_configuration={
         #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
@@ -312,7 +312,7 @@ def record_page():
         # """
         # # css適用
         # st.markdown(playing_css, unsafe_allow_html=True)
-        
+
         # # 再生用変数
         # playing = True
         # 画面遷移用ボタン
@@ -329,7 +329,7 @@ def record_page():
                 z-index: 61;
                 # opacity:0;
                 # animation-name: sample01; /*←@keyframesにも同じ名前を記述*/
-                # animation-duration: 3s; 
+                # animation-duration: 3s;
                 # animation-fill-mode: forwards;
                 }}
         # @keyframes sample01 {{
@@ -359,7 +359,7 @@ def result_page():
     eye_track_json = glob.glob("./results/eye_track.json")
     with open('./results/eye_track.json') as f:
         eye_track = json.load(f)
-        
+
     with open('./results/voice_analyze.json') as f:
         voice_analyze = json.load(f)
 
