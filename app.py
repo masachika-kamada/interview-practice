@@ -349,25 +349,49 @@ def record_page():
         # 値の受け渡し
     st.session_state['camera']='70'
     st.session_state['smile']='30'
-    st.session_state['normal']='40'
-    st.session_state['interviwer']='良'
-    st.session_state['volume']='ちょうど良い'
+    # st.session_state['normal']='40'
+    # st.session_state['interviwer']='良'
+    st.session_state['volume']='50'
     st.session_state['silence']='50'
-    st.session_state['rank']='B'
+    # st.session_state['rank']='B'
+
+def calc_score(eye, smile, volume, mic_off):
+    score = eye + smile - mic_off
+    # 全部均一に換算してるが、優先順位とか考えてもいいかも
+    # volumeを計算式に追加する必要あり
+
+    if score >=300:
+        comment = "good"
+    elif 200 <= score < 300:
+        comment = "normal"
+    elif 100 <= score < 200:
+        comment = "not good"
+    else: 
+        comment = "Bad"
+    
+    st.session_state['evaluation'] = comment
 
 def result_page():
     eye_track_json = glob.glob("./results/eye_track.json")
     with open('./results/eye_track.json') as f:
         eye_track = json.load(f)
         
+        
     with open('./results/voice_analyze.json') as f:
         voice_analyze = json.load(f)
 
     i = random.randrange(1, 4)
-    img_dict = {1:"https://images.unsplash.com/photo-1604488912264-dfed70450d76?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=922&q=80", 2:"https://images.unsplash.com/photo-1627199219038-e8263f729e3d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1031&q=80", 3:"https://images.unsplash.com/photo-1632144130358-6cfeed023e27?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80", 4:"https://images.unsplash.com/photo-1637855190680-5cbe1d870b46?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"}
+    img_dict = {1:"https://images.unsplash.com/photo-1604488912264-dfed70450d76?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=922&q=80", 
+                2:"https://images.unsplash.com/photo-1627199219038-e8263f729e3d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1031&q=80", 
+                3:"https://images.unsplash.com/photo-1632144130358-6cfeed023e27?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80", 
+                4:"https://images.unsplash.com/photo-1637855190680-5cbe1d870b46?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80", }
 
     # 質問割り当て
-    question_dict = {1:"自己紹介をお願いします", 2:"志望動機は何ですか？", 3:"学生時代に頑張ったことはなんですか？", 4:"長所と短所を教えてください", 5:"将来のキャリア像について教えてください"}
+    question_dict = {1:"自己紹介をお願いします", 
+                    2:"志望動機は何ですか？", 
+                    3:"学生時代に頑張ったことはなんですか？", 
+                    4:"長所と短所を教えてください", 
+                    5:"将来のキャリア像について教えてください"}
 
     stc.html("""
         <head>
@@ -394,6 +418,18 @@ def result_page():
         """, height=145
         )
 
+    # st.session_state['camera']='70'
+    # st.session_state['smile']='30'
+    # st.session_state['volume']='50'
+    # st.session_state['silence']='50'
+
+    eye = round(eye_track['eye_center_ratio']*100)
+    smile = int(st.session_state['smile'])
+    volume = int(st.session_state['volume'])
+    mic_off = round(voice_analyze['mic_off_ratio']*100)
+    
+    calc_score(eye,smile,volume,mic_off)
+
     stc.html("""
     <div class='wrapper'>
         <div class='first'>
@@ -401,12 +437,12 @@ def result_page():
             <p>無言の時間率<span class='mute_coma'>：</span><span class='point mute_span'>""" + str(round(voice_analyze['mic_off_ratio']*100)) + """</span>%</p>
         </div>
         <div class='second'>
-            <p>笑顔率<span class='smile_coma'>：</span><span class='point smile_span'>""" + str(round(eye_track['face_smile_ratio']*100)) + """</span>%</p>
+            <p>笑顔率<span class='smile_coma'>：</span><span class='point smile_span'>""" + str(round(eye_track['face_smile_ratio']*100)) +  """</span>%</p>
             <p>声量<span class='volume_coma'>：</span><span class='point volume_span'>""" + st.session_state['volume'] +  """</span></p>
         </div>
     </div>
     <div class='under_wrapper'>
-        <p>面接官からの印象<span class='impression_coma'>：</span><span class='point impression_span'>""" + st.session_state['interviwer'] + """</span></p>
+        <p>面接官からの印象<span class='impression_coma'>：</span><span class='point impression_span'>""" + st.session_state['evaluation'] + """</span></p>
     </div>
     <div class="img_div">
         <img src=""" + img_dict[i]+ """>
