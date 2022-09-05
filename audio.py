@@ -1,4 +1,3 @@
-from ast import Num
 import numpy as np
 import json
 
@@ -24,7 +23,7 @@ class AudioProcessor:
             if bool(r) is False:
                 false_cnt += 1
             else:
-                if false_cnt < 35:
+                if false_cnt < 20:
                     mic_on_time += false_cnt
                 else:
                     mic_off_time += false_cnt
