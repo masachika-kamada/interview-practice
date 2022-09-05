@@ -59,8 +59,8 @@ def main():
         <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap" rel="stylesheet">
     </head>
     <h1 class='title'>めんたつ</h1>
-    <h1 class='subtitle'>あなたの<span>”オンライン面接力”</span>を測ってみよう。</h1>
-    <h2 class='subtitle'>-How much <span>”Online-Interview-Skills”</span>do you have?-</h2>
+    <h1 class='subtitle'>あなたの<span> ”オンライン面接力” </span>を測ってみよう。</h1>
+    <h2 class='subtitle'>-How much <span> ”Online-Interview-Skills” </span>do you have?-</h2>
     <style>
     .title {
         text-align: center;
