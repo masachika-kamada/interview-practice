@@ -25,7 +25,6 @@ def main():
 def record_page():
     # ビデオ開始用変数 ボタンクリックでtrueにする
     playing = False
-
     if 'count' not in st.session_state:
         st.session_state["count"] = 0
     if 'end_button' not in st.session_state:
@@ -33,11 +32,17 @@ def record_page():
 
     container = st.container()
     start = container.button('開始する')
+    print('35行目だよ!!!!!!!!!!!!!!!!!!',st.session_state["count"])
+
     if start:
+        print('38行目だよ!!!!!!!!!!!!!!!!!!',st.session_state["count"])
         if st.session_state["count"] == 0:
             st.session_state["count"] += 1
         else :
             st.session_state["count"] == 0
+            print('43行目のelse！！！！！')
+
+    print('45行目のcount!!!!!!!!!!',st.session_state["count"])
 
     # 開始ボタンクリック時
     if st.session_state["count"] == 1:
@@ -63,6 +68,10 @@ def record_page():
         audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
         time.sleep(3)  # 音声再生時間
         st.session_state["count"] += 1
+
+        print('音声流し終わりcount', st.session_state["count"])
+        print('73行目だよ!!!!!!!!!!!!!!!!!!',st.session_state["count"])
+
 
     if st.session_state["count"] == 2:
         st.markdown(layout.rem_stop_button_css, unsafe_allow_html=True)
@@ -124,11 +133,16 @@ def show_result():
 
 if __name__ == '__main__':
     # 状態保持する変数を作成して確認
+    print(st.session_state,':ステートの中身だよ')
     if ("page_control" in st.session_state and
         0 < st.session_state["page_control"] < 6):
+        print('レコード関数呼ばれている')
         record_page()
     elif ("page_control" in st.session_state and
         st.session_state["page_control"] == 6):
+        print('result関数呼ばれている')
         result_page()
     else:
+        print('main関数が呼ばれているよ')
         main()
+    print(' N 回目だよ')
