@@ -1,8 +1,8 @@
+numpy
 streamlit
 streamlit_webrtc
-opencv-python-headless
-numpy
-av
-cmake
-dlib
+opencv-python-headless==4.5.4.60
+opencv-contrib-python-headless==4.5.4.60
 click
+av
+dlib-binary
