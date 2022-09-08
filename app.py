@@ -75,9 +75,9 @@ def record_page():
         video_processor_factory=VideoProcessor,
         audio_processor_factory=AudioProcessor,
         # デプロイ時にコメントアウト除去
-        # rtc_configuration={
-        #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-        # }
+        rtc_configuration={
+            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        }
     )
 
     st.markdown(layout.button_css, unsafe_allow_html=True)
