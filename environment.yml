@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python==3.8
+  - python==3.10.4
   - cmake==3.21.1
   - dlib
   - opencv
