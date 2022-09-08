@@ -25,6 +25,7 @@ def main():
 def record_page():
     # ビデオ開始用変数 ボタンクリックでtrueにする
     playing = False
+    
     if 'count' not in st.session_state:
         st.session_state["count"] = 0
     if 'end_button' not in st.session_state:
@@ -32,13 +33,11 @@ def record_page():
 
     container = st.container()
     start = container.button('開始する')
-
     if start:
         if st.session_state["count"] == 0:
             st.session_state["count"] += 1
         else :
             st.session_state["count"] == 0
-
 
     # 開始ボタンクリック時
     if st.session_state["count"] == 1:
@@ -64,7 +63,6 @@ def record_page():
         audio_placeholder.markdown(audio_html, unsafe_allow_html=True)
         time.sleep(3)  # 音声再生時間
         st.session_state["count"] += 1
-
 
     if st.session_state["count"] == 2:
         st.markdown(layout.rem_stop_button_css, unsafe_allow_html=True)
