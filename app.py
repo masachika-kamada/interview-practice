@@ -132,4 +132,5 @@ if __name__ == "__main__":
         st.session_state["page_control"] == 6):
         result_page()
     else:
+        st.session_state["count"] = 0
         main()
