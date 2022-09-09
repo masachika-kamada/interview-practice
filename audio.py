@@ -33,6 +33,6 @@ class AudioProcessor:
         d = {
             "mic_off_ratio": min_off_ratio
         }
-        with open('results/voice_analyze.json', 'w') as f:
+        with open("results/voice_analyze.json", "w") as f:
             json.dump(d, f)
 

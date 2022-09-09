@@ -25,14 +25,14 @@ def main():
 def record_page():
     # ビデオ開始用変数 ボタンクリックでtrueにする
     playing = False
-    
-    if 'count' not in st.session_state:
+
+    if "count" not in st.session_state:
         st.session_state["count"] = 0
-    if 'end_button' not in st.session_state:
+    if "end_button" not in st.session_state:
         st.session_state["end_button"] = 0
 
     container = st.container()
-    start = container.button('開始する')
+    start = container.button("開始する")
     if start:
         if st.session_state["count"] == 0:
             st.session_state["count"] += 1
@@ -68,28 +68,29 @@ def record_page():
         st.markdown(layout.rem_stop_button_css, unsafe_allow_html=True)
         playing = True
 
+    print("playing", playing)
     webrtc_streamer(
         key="",
         desired_playing_state=playing,
         video_processor_factory=VideoProcessor,
         audio_processor_factory=AudioProcessor,
         # デプロイ時にコメントアウト除去
-        # rtc_configuration={
-        #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-        # }
+        rtc_configuration={
+            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        }
     )
 
     st.markdown(layout.button_css, unsafe_allow_html=True)
 
     if st.session_state["count"] == 2:
-        st.button('終了する', on_click=show_result)
+        st.button("終了する", on_click=show_result)
         st.markdown(layout.stop_css, unsafe_allow_html=True)
 
 
 def result_page():
-    stc.html(content.result_upper(st.session_state['question'] - 1), height=145)
+    stc.html(content.result_upper(st.session_state["question"] - 1), height=145)
     stc.html(content.result_lower(), height=450)
-    st.button('他の質問で分析してみる', on_click=show_home)
+    st.button("他の質問で分析してみる", on_click=show_home)
     st.markdown(layout.result_css, unsafe_allow_html=True)
 
 
@@ -122,7 +123,7 @@ def show_result():
     st.session_state["page_control"] = 6
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # 状態保持する変数を作成して確認
     if ("page_control" in st.session_state and
         0 < st.session_state["page_control"] < 6):

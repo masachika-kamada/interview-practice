@@ -3,7 +3,6 @@ import cv2
 import dlib
 import numpy as np
 import json
-from deepface import DeepFace
 
 
 class VideoProcessor:
@@ -17,19 +16,18 @@ class VideoProcessor:
         self.eye_right = 0
         self.face_smile = 0
         self.face_else = 0
+        self.gain = 5 / 100
+        self.smile_thresh = 0.7
+        self.face_cascade = cv2.CascadeClassifier("haarcascade/haarcascade_frontalface_default.xml")
+        self.smile_cascade = cv2.CascadeClassifier("haarcascade/haarcascade_smile.xml")
 
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
 
-        try:
-            result = DeepFace.analyze(img, actions=['emotion'])
-            emotion = result['dominant_emotion']
-            if emotion == "happy":
-                self.face_smile += 1
-            else:
-                self.face_else += 1
-        except Exception:
-            print("No face detected")
+        if self.__detect_smile(img):
+            self.face_smile += 1
+        else:
+            self.face_else += 1
 
         ret, pupil_coords, eye_tracks = self.__detect_eyes(img)
         if ret is False:
@@ -38,18 +36,18 @@ class VideoProcessor:
         for coord in pupil_coords:
             if coord is None:
                 continue
-            # cv2.drawMarker(img, coord, (0, 0, 255), cv2.MARKER_CROSS, markerSize=10, thickness=2)
+            cv2.drawMarker(img, coord, (0, 0, 255), cv2.MARKER_CROSS, markerSize=10, thickness=2)
         eye_hor_l = 1 - eye_tracks[0][0]
         eye_hor_r = eye_tracks[1][0]
         diff_eyes_hor = eye_hor_l - eye_hor_r
         if abs(diff_eyes_hor) < self.thresh_diff_eyes_hor:
-            # cv2.putText(img, "Center", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(img, "Center", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             self.eye_center += 1
         elif diff_eyes_hor < 0:
-            # cv2.putText(img, "Left", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(img, "Left", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             self.eye_left += 1
         else:
-            # cv2.putText(img, "Right", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(img, "Right", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             self.eye_right += 1
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
@@ -61,8 +59,28 @@ class VideoProcessor:
             "eye_right_ratio": self.eye_right / n_frames,
             "face_smile_ratio": self.face_smile / (self.face_else + self.face_smile),
         }
-        with open('results/eye_track.json', 'w') as f:
+        with open("results/eye_track.json", "w") as f:
             json.dump(d, f)
+
+    def __detect_smile(self, img):
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = self.face_cascade.detectMultiScale(gray, 1.1, 5, minSize=(50,50))
+
+        for (x, y, w, h) in faces:
+            roi_gray = gray[y:y + h, x:x + w]
+            roi_gray = cv2.resize(roi_gray,(100,100))
+            smiles = self.smile_cascade.detectMultiScale(roi_gray, scaleFactor=1.1, minNeighbors=0, minSize=(20, 20))
+
+            #笑顔強度の算出
+            smile_neighbors = len(smiles)
+            intensity = smile_neighbors * self.gain
+
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+            if intensity >= self.smile_thresh:
+                cv2.putText(img, "Smiling", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 3)
+                return True
+        return False
 
     def __detect_eyes(self, img):
         img_g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
