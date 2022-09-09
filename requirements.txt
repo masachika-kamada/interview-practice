@@ -1,8 +1,21 @@
+# numpy
+# streamlit
+# # streamlit_webrtc
+# opencv-python-headless==4.5.4.60
+# opencv-contrib-python-headless==4.5.4.60
+# click
+# # av
+# dlib-binary
 numpy
+scipy
 streamlit
-# streamlit_webrtc
+pillow
+requests
 opencv-python-headless==4.5.4.60
 opencv-contrib-python-headless==4.5.4.60
-click
-# av
+tensorflow-cpu
+torch
+face-alignment
+onnxruntime
 dlib-binary
+gdown
