@@ -4,4 +4,5 @@ channels:
   - defaults
 dependencies:
   - python==3.10.4
-  - opencv
+  - cmake==3.21.1
+  - dlib
