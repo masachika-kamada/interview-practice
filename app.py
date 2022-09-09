@@ -25,7 +25,7 @@ def main():
 def record_page():
     # ビデオ開始用変数 ボタンクリックでtrueにする
     playing = False
-
+    
     if 'count' not in st.session_state:
         st.session_state["count"] = 0
     if 'end_button' not in st.session_state:
@@ -131,4 +131,5 @@ if __name__ == '__main__':
         st.session_state["page_control"] == 6):
         result_page()
     else:
+        st.session_state["count"] = 0
         main()
