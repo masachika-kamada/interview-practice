@@ -36,18 +36,18 @@ class VideoProcessor:
         for coord in pupil_coords:
             if coord is None:
                 continue
-            cv2.drawMarker(img, coord, (0, 0, 255), cv2.MARKER_CROSS, markerSize=10, thickness=2)
+            # cv2.drawMarker(img, coord, (0, 0, 255), cv2.MARKER_CROSS, markerSize=10, thickness=2)
         eye_hor_l = 1 - eye_tracks[0][0]
         eye_hor_r = eye_tracks[1][0]
         diff_eyes_hor = eye_hor_l - eye_hor_r
         if abs(diff_eyes_hor) < self.thresh_diff_eyes_hor:
-            cv2.putText(img, "Center", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            # cv2.putText(img, "Center", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             self.eye_center += 1
         elif diff_eyes_hor < 0:
-            cv2.putText(img, "Left", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            # cv2.putText(img, "Left", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             self.eye_left += 1
         else:
-            cv2.putText(img, "Right", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            # cv2.putText(img, "Right", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             self.eye_right += 1
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
@@ -76,10 +76,10 @@ class VideoProcessor:
             smile_neighbors = len(smiles)
             intensity = smile_neighbors * self.gain
 
-            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            # cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
             if intensity >= self.smile_thresh:
-                cv2.putText(img, "Smiling", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 3)
+                # cv2.putText(img, "Smiling", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 3)
                 return True
         return False
 
