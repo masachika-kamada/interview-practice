@@ -59,8 +59,9 @@ class VideoProcessor:
             "eye_right_ratio": self.eye_right / n_frames,
             "face_smile_ratio": self.face_smile / (self.face_else + self.face_smile),
         }
-        with open("results/eye_track.json", "w") as f:
+        with open("results/video.json", "w") as f:
             json.dump(d, f)
+        print("Video processing ended")
 
     def __detect_smile(self, img):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -99,6 +100,8 @@ class VideoProcessor:
         for idx in eyes_idx:
             ref_point, eye_img, w, h = self.__get_eye_img(img, landmarks, idx)
             cx, cy = self.__get_pupil_coord(eye_img)
+            if cx is None or cy is None:
+                return False, None, None
             pupil_coords.append((int(cx + ref_point[0]), int(cy + ref_point[1])))
             eye_track.append((cx / w, cy / h))
         return True, pupil_coords, eye_track

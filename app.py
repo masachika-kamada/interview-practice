@@ -3,6 +3,7 @@ import streamlit.components.v1 as stc
 from streamlit_webrtc import webrtc_streamer
 import time
 import base64
+import os
 from video import VideoProcessor
 from audio import AudioProcessor
 import layout, content
@@ -69,6 +70,7 @@ def record_page():
         playing = True
 
     print("playing", playing)
+    os.makedirs("results", exist_ok=True)
     webrtc_streamer(
         key="",
         desired_playing_state=playing,
@@ -88,10 +90,15 @@ def record_page():
 
 
 def result_page():
+    print("result_page")
     stc.html(content.result_upper(st.session_state["question"] - 1), height=145)
     stc.html(content.result_lower(), height=450)
     st.button("他の質問で分析してみる", on_click=show_home)
     st.markdown(layout.result_css, unsafe_allow_html=True)
+
+
+def cushion():
+    st.button("結果を見る", on_click=result_page)
 
 
 def show_home():
@@ -130,7 +137,7 @@ if __name__ == "__main__":
         record_page()
     elif ("page_control" in st.session_state and
         st.session_state["page_control"] == 6):
-        result_page()
+        cushion()
     else:
         st.session_state["count"] = 0
         main()

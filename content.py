@@ -1,5 +1,6 @@
 import json
 import random
+import numpy as np
 
 
 title = """
@@ -135,21 +136,24 @@ def result_upper(idx):
         </style>
         """
     return content
-#global変数（スコアによって画像を変更するための初期値）
-score_img_number = 1
 
 def result_lower():
-    with open('./results/eye_track.json') as f:
-        eye_track = json.load(f)
+    print("json read")
+    with open("./results/video.json", "r") as f:
+        video_res = json.load(f)
 
-    with open('./results/voice_analyze.json') as f:
-        voice_analyze = json.load(f)
+    with open("./results/audio.json", "r") as f:
+        audio_res = json.load(f)
 
     # 分かりやすいように変数定義
-    eye = round(eye_track['eye_center_ratio']*100)
-    mic_off = round(voice_analyze['mic_off_ratio']*100)
-    smile = 50
-    volume = 50
+    eye = round(video_res["eye_center_ratio"]*100)
+    mic_off = round(audio_res["mic_off_ratio"]*100)
+    smile = round(video_res["face_smile_ratio"]*100)
+    volume = round(audio_res["volume"]*100)
+    if volume > 100:
+        volume = 100
+
+    img_idx, comment = calc_impression(eye, smile, mic_off, volume)
 
     img_paths = [
         "https://user-images.githubusercontent.com/63488322/188748819-3b49bf32-a860-4864-b5e2-ce7db8f214fb.jpg",
@@ -163,7 +167,6 @@ def result_lower():
         "https://user-images.githubusercontent.com/84577532/189159583-1b009fe1-f41f-4ec4-afc0-d48814674d0c.jpg",
         "https://user-images.githubusercontent.com/84577532/189159935-183b960c-d22c-4414-8739-e785ae2d12f9.jpg",
         "https://user-images.githubusercontent.com/84577532/189159949-47859b08-80a7-440a-bebc-b11d33f03779.jpg"
-
     ]
 
     content = """
@@ -174,14 +177,14 @@ def result_lower():
         </div>
         <div class='second'>
             <p>笑顔率<span class='smile_coma'>：</span><span class='point smile_span'>""" + str(smile) +  """</span>%</p>
-            <p>声量<span class='volume_coma'>：</span><span class='point volume_span'>""" + str(volume) +  """</span></p>
+            <p>声量<span class='volume_coma'>：</span><span class='point volume_span'>""" + str(volume) +  """</span>%</p>
         </div>
     </div>
     <div class='under_wrapper'>
-        <p>面接官からの印象<span class='impression_coma'>：</span><span class='point impression_span'>""" + calc_impression(eye, smile, mic_off, volume)  + """</span></p>
+        <p>面接官からの印象<span class='impression_coma'>：</span><span class='point impression_span'>""" + comment + """</span></p>
     </div>
     <div class="img_div">
-        <img src=""" + img_paths[score_img_number] + """>
+        <img src=""" + img_paths[img_idx] + """>
     </div>
     <style>
     .wrapper {
@@ -226,25 +229,25 @@ def result_lower():
     </style>
     """
     return content
-    
 
 
 def calc_impression(eye, smile, mic_off, volume):
-    score = eye + smile - mic_off + volume - 100
-    # 全部均一に換算してるが、優先順位とか考えてもいいかも
-    # volumeを計算式に追加する必要あり
-    global score_img_number
+    score = np.array([eye, smile, 100 - mic_off, volume])
+    print(score)
+    judge = len(np.where(score > 70)[0])
+    print(judge)
 
-    if score >= 300:
+    if judge == 4:
         # img_divでの画像表示用の番号を定義
         score_img_number = random.randrange(0, 4)
-        return "大変すばらしい面接です。この調子で頑張ってください！"
-    elif score >= 200:
+        comment = "大変すばらしい面接です。この調子で頑張ってください！"
+    elif judge == 3:
         score_img_number = random.randrange(4, 7)
-        return "おおむねよくできています！"
-    elif score >= 100:
+        comment = "おおむねよくできています！"
+    elif judge == 2:
         score_img_number = random.randrange(7, 9)
-        return "もう少し頑張りましょう"
+        comment = "もう少し頑張りましょう"
     else:
         score_img_number = random.randrange(9, 11)
-        return "めんたつで再度練習しましょう"
+        comment = "めんたつで再度練習しましょう"
+    return score_img_number, comment
